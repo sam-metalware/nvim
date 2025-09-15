@@ -37,6 +37,7 @@ vim.g.rustaceanvim = {
         vim.cmd.RustLsp("parentModule")
       end, { desc = "Rust Parent Module", buffer = bufnr })
 
+
       -- Join lines (already have this macro)
       --vim.keymap.set("n", "<leader>rj", function()
       --  vim.cmd.RustLsp("joinLines")
@@ -51,6 +52,14 @@ vim.g.rustaceanvim = {
       vim.keymap.set("n", "<leader>rc", function()
         vim.cmd.RustLsp("crateGraph")
       end, { desc = "Rust Crate Graph", buffer = bufnr })
+
+      -- Autoformat on save
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        buffer = bufnr,
+        callback = function()
+          vim.lsp.buf.format({ async = false })
+        end,
+      })
     end,
     default_settings = {
       ["rust-analyzer"] = {

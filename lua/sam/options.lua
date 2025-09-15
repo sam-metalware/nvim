@@ -24,6 +24,21 @@ vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"
 vim.opt.isfname:append("@-@")
 
-vim.opt.updatetime = 50
+vim.opt.updatetime = 20
 
-vim.opt.colorcolumn = "80"
+vim.opt.colorcolumn = "100"
+
+vim.opt.wrap = true
+
+
+-- trigger `autoread` when files changes on disk
+vim.opt.autoread = true
+vim.api.nvim_create_autocmd({'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'}, {
+  pattern = '*',
+  command = 'if mode() != "c" | checktime | endif'
+})
+-- notification after file change
+vim.api.nvim_create_autocmd('FileChangedShellPost', {
+  pattern = '*',
+  command = 'echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None'
+})
