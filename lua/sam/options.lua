@@ -35,7 +35,7 @@ vim.opt.wrap = true
 vim.opt.autoread = true
 vim.api.nvim_create_autocmd({'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI', 'CursorMoved', 'CursorMovedI'}, {
   pattern = '*',
-  command = 'if mode() != "c" | checktime | endif'
+  command = 'if getcmdwintype() == "" | checktime | endif'
 })
 -- notification after file change
 vim.api.nvim_create_autocmd('FileChangedShellPost', {
