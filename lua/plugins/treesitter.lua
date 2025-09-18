@@ -59,5 +59,12 @@ return {
         }
 
         vim.treesitter.language.register("templ", "templ")
+
+        -- Override filetype detection for .ins files to prevent latex parser
+        vim.filetype.add({
+            extension = {
+                ins = "text"
+            }
+        })
     end
 }
