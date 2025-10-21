@@ -1,6 +1,7 @@
 -- Configure rustaceanvim via global variable
 vim.g.rustaceanvim = {
   server = {
+    capabilities = require("blink.cmp").get_lsp_capabilities(),
     on_attach = function(client, bufnr)
       local opts = { noremap = true, silent = true, buffer = bufnr }
       
@@ -137,4 +138,7 @@ return {
   version = '^6',
   lazy = false,
   ft = { "rust" },
+  dependencies = {
+    "blink.cmp",
+  },
 }

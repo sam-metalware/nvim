@@ -19,8 +19,12 @@ return {
     dependencies = {
       "mason.nvim",
       "mason-lspconfig.nvim",
+      "blink.cmp",
     },
     config = function()
+      -- Get blink.cmp capabilities
+      local capabilities = require("blink.cmp").get_lsp_capabilities()
+
       vim.lsp.config.clangd = {
         cmd = {
           "clangd",
@@ -36,9 +40,10 @@ return {
           completeUnimported = true,
           clangdFileStatus = true,
         },
+        capabilities = capabilities,
         root_dir = vim.fs.root(0, {
           "Makefile",
-          "configure.ac", 
+          "configure.ac",
           "configure.in",
           "config.h.in",
           "meson.build",
