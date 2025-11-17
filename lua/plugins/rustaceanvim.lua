@@ -4,7 +4,7 @@ vim.g.rustaceanvim = {
     capabilities = require("blink.cmp").get_lsp_capabilities(),
     on_attach = function(client, bufnr)
       local opts = { noremap = true, silent = true, buffer = bufnr }
-      
+
       -- Navigation
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
       vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
