@@ -63,13 +63,13 @@ fn main() {
     println!("Person: {:?}", alice);
 
     // Test fibonacci
-    println("\nFibonacci sequence:");
+    println!("\nFibonacci sequence:");
     for i in 0..10 {
         println!("fib({}) = {}", i, fibonacci(i));
     }
 
     // Test number processing
-    let num1ers = vec![1, 5, 3, 9, 2, 8, 4];
+    let numbers = vec![1, 5, 3, 9, 2, 8, 4];
     let stats = process_numbers(numbers.clone());
 
     println!("\nNumbers: {:?}", numbers);
