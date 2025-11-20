@@ -1,7 +1,18 @@
 vim.g.rustaceanvim = {
   server = {
+    capabilities = require("blink.cmp").get_lsp_capabilities(),
     on_attach = function(client, bufnr)
       local opts = { noremap = true, silent = true, buffer = bufnr }
+
+      -- Enable inlay hints
+      if client.server_capabilities.inlayHintProvider then
+        vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+      end
+
+      -- Enable semantic tokens
+      if client.server_capabilities.semanticTokensProvider then
+        vim.api.nvim_set_hl(0, '@lsp.type.comment', {})
+      end
 
       -- Navigation
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
@@ -29,6 +40,21 @@ vim.g.rustaceanvim = {
       vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
       vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
       vim.keymap.set('n', 'cd', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+
+      -- Toggle inlay hints
+      vim.keymap.set('n', '<leader>th', function()
+        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+      end, { desc = 'Toggle inlay hints', buffer = bufnr })
+
+      -- Code lens
+      if client.server_capabilities.codeLensProvider then
+        vim.lsp.codelens.refresh()
+        vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+          buffer = bufnr,
+          callback = vim.lsp.codelens.refresh,
+        })
+        vim.keymap.set('n', '<leader>cl', vim.lsp.codelens.run, { desc = 'Run code lens', buffer = bufnr })
+      end
 
       -- Debuggables
       vim.keymap.set("n", "<leader>rd", function()
@@ -77,6 +103,33 @@ vim.g.rustaceanvim = {
             ["async-recursion"] = { "async_recursion" },
           },
         },
+        inlayHints = {
+          bindingModeHints = {
+            enable = true,
+          },
+          chainingHints = {
+            enable = true,
+          },
+          closingBraceHints = {
+            minLines = 10,
+          },
+          closureReturnTypeHints = {
+            enable = "always",
+          },
+          lifetimeElisionHints = {
+            enable = "skip_trivial",
+            useParameterNames = true,
+          },
+          parameterHints = {
+            enable = false,
+          },
+          typeHints = {
+            enable = true,
+            --enable = true,
+            hideClosureInitialization = false,
+            hideNamedConstructor = false,
+          },
+        },
         files = {
           excludeDirs = {
             ".direnv",
@@ -100,4 +153,16 @@ return {
   version = '^6',
   lazy = false,
   ft = { "rust" },
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "MunifTanjim/nui.nvim",
+    --- The below dependencies are optional,
+    "nvim-mini/mini.pick", -- for file_selector provider mini.pick
+    "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+    "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+    "ibhagwan/fzf-lua", -- for file_selector provider fzf
+    "stevearc/dressing.nvim", -- for input provider dressing
+    "folke/snacks.nvim", -- for input provider snacks
+    "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+    },
 }

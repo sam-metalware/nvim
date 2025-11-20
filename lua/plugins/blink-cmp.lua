@@ -25,6 +25,20 @@ return {
 
     sources = {
       default = { "lsp", "path", "snippets", "buffer" },
+      providers = {
+        lsp = {
+          score_offset = 100, -- Prioritize LSP completions
+        },
+        path = {
+          score_offset = 50,
+        },
+        snippets = {
+          score_offset = 40,
+        },
+        buffer = {
+          score_offset = -10, -- Deprioritize simple buffer word matches
+        },
+      },
     },
 
     cmdline = {
