@@ -13,11 +13,13 @@ return {
             env = {
               api_key = "ANTHROPIC_API_KEY", -- Will read from environment variable
             },
-        schema = {
-          model = {
-            default = "claude-3-5-sonnet-20241022", -- or claude-3-haiku-20240307 for cheaper
-          },
-
+            schema = {
+              model = {
+                -- default = "claude-3-5-sonnet-20241022", -- or claude-3-haiku-20240307 for cheaper
+                --default = "claude-haiku-4-5-20251001"
+                default = "claude-sonnet-4-5-20250929"
+              },
+            },
           })
         end,
       },
