@@ -4,9 +4,9 @@ vim.g.rustaceanvim = {
     on_attach = function(client, bufnr)
       local opts = { noremap = true, silent = true, buffer = bufnr }
 
-      -- Enable inlay hints
+      -- Disable inlay hints by default
       if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
       end
 
       -- Enable semantic tokens
