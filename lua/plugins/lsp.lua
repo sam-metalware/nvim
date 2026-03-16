@@ -4,6 +4,8 @@ return {
     opts = {
       ensure_installed = {
         "clangd",
+        "pyright",
+        "ruff",
       },
     },
   },
@@ -11,7 +13,7 @@ return {
     "williamboman/mason-lspconfig.nvim",
     dependencies = { "mason.nvim" },
     opts = {
-      ensure_installed = { "clangd" },
+      ensure_installed = { "clangd", "pyright", "ruff" },
     },
   },
   {
@@ -110,6 +112,69 @@ return {
 
       -- Enable clangd LSP server
       vim.lsp.enable('clangd')
+
+      -- Pyright: type checking, completions, go-to-definition
+      vim.lsp.config.pyright = {
+        capabilities = capabilities,
+        settings = {
+          pyright = {
+            disableOrganizeImports = true,
+          },
+          python = {
+            analysis = {
+              ignore = { "*" },
+              typeCheckingMode = "basic",
+            },
+          },
+        },
+        on_attach = function(client, bufnr)
+          local opts = { noremap = true, silent = true, buffer = bufnr }
+
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+          vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+          vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+          vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
+          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+
+          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+
+          vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+          vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+          vim.keymap.set('n', '<leader>wl', function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+          end, opts)
+
+          vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+          vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+          vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+          vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+
+          vim.keymap.set('n', '<leader>th', function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
+          end, { desc = 'Toggle inlay hints', buffer = bufnr })
+        end,
+      }
+
+      -- Ruff: linting + formatting
+      vim.lsp.config.ruff = {
+        capabilities = capabilities,
+        on_attach = function(client, bufnr)
+          client.server_capabilities.hoverProvider = false
+
+          vim.api.nvim_create_autocmd("BufWritePre", {
+            buffer = bufnr,
+            callback = function()
+              vim.lsp.buf.format({ async = false })
+            end,
+          })
+        end,
+      }
+
+      vim.lsp.enable('pyright')
+      vim.lsp.enable('ruff')
     end,
   },
 }
