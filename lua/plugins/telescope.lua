@@ -4,6 +4,7 @@ return {
   keys = function()
     return {
 	    {"<leader><leader>", "<cmd>Telescope find_files<cr>", desc = "Telescope Find Files" },
+	    {"<leader>fI", "<cmd>Telescope find_files hidden=true no_ignore=true<cr>", desc = "Telescope Find Files (all)" },
 	    {"<leader>fg", "<cmd>Telescope live_grep<cr>",  desc = "Telescope Live Grep"  },
 	    {"<leader>fs", "<cmd>Telescope grep_string<cr>",  desc = "Telescope Live Grep"  },
 	    {"<leader>fb", "<cmd>Telescope buffers<cr>",    desc = "Telescope buffers"    },
