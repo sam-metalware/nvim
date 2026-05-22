@@ -1,16 +1,26 @@
+local function accept_copilot_suggestion()
+  local ok, suggestion = pcall(require, "copilot.suggestion")
+  if ok and suggestion.is_visible() then
+    suggestion.accept()
+    return true
+  end
+end
+
 return {
   "saghen/blink.cmp",
   lazy = false,
   dependencies = {
     "rafamadriz/friendly-snippets",
     "L3MON4D3/LuaSnip",
+    { "saghen/blink.compat", version = "2.*" },
   },
   version = "v0.*",
   opts = {
     keymap = {
       preset = "default",
-      ["<Tab>"] = { "select_next", "fallback" },
+      ["<Tab>"] = { accept_copilot_suggestion, "select_next", "fallback" },
       ["<S-Tab>"] = { "select_prev", "fallback" },
+      ["<C-y>"] = { "select_prev", "fallback" },
       ["<CR>"] = { "accept", "fallback" },
       ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
       ["<C-e>"] = { "hide" },
