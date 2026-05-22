@@ -1,6 +1,25 @@
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "rust",
+  once = true,
+  callback = function()
+    if vim.fn.executable("rust-analyzer") == 0 then
+      vim.notify(
+        "rust-analyzer not found on PATH. Install with: rustup component add rust-analyzer",
+        vim.log.levels.ERROR,
+        { title = "rustaceanvim" }
+      )
+    end
+  end,
+})
+
 vim.g.rustaceanvim = {
   server = {
-    capabilities = require("blink.cmp").get_lsp_capabilities(),
+    capabilities = vim.tbl_deep_extend("force", require("blink.cmp").get_lsp_capabilities(), {
+      general = {
+        positionEncodings = { "utf-16" },
+      },
+      offsetEncoding = { "utf-16" },
+    }),
     on_attach = function(client, bufnr)
       local opts = { noremap = true, silent = true, buffer = bufnr }
 
@@ -22,7 +41,9 @@ vim.g.rustaceanvim = {
       vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
 
       -- Documentation
-      vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+      vim.keymap.set('n', 'K', function()
+        vim.cmd.RustLsp({ 'hover', 'actions' })
+      end, opts)
       vim.keymap.set('n', 'gK', vim.lsp.buf.signature_help, opts)
 
       -- Code actions
@@ -81,6 +102,14 @@ vim.g.rustaceanvim = {
     end,
     default_settings = {
       ["rust-analyzer"] = {
+        rustfmt = {
+          overrideCommand = {
+            "rustfmt",
+            "--edition", "2021",
+            "--config-path", "/home/sam/gitlab/havoc/rustfmt.toml",
+            "--emit", "stdout",
+          },
+        },
         cargo = {
           allFeatures = true,
           loadOutDirsFromCheck = true,
